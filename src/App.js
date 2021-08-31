@@ -13,20 +13,13 @@ const App = () => {
   const [showForm, setShowForm] = useState(false)
 
   const addBook = (book) => {
-    let image = `https://robohash.org/${book.title}/?size=50x50`
-    let full_book = {...book, image}
-    setBooks([full_book, ...books])
-
-    return (
-      <div style={styles.appContainer}>
-        { showForm && 
-        <BookForm addBook={addBook} setShowForm={setShowForm}/>}
-        <button 
-          onClick={()=>setShowForm(!showForm)}>toggle new form</button>
-        {renderBooks()}
-      </div>
-    );
+    books.push(book)
   };
+
+  const deleteBook = (isbn) => {
+    let filteredBook = books.filter(book=> book.isbn !== isbn)
+    setBooks(filteredBook)
+  }
 
   const getBooks = async () => {
     try {
@@ -47,10 +40,13 @@ const App = () => {
     return books.map((book) => {
       return (
         <div style={styles.container} key={book.isbn}>
-          <h1>{`${book.title} ${book.author}`}</h1>
-          <h3>{`${book.genre}`}</h3> 
+          <h1>{`${book.title}`}</h1>
+          <h2>{`${book.author}`}</h2>
+          <h3>{`${book.genre}`}</h3>
           <p>{`${book.description}`}</p>
           <h4>{`${book.published} ${book.publisher}`}</h4>
+          <h5>{`${book.isbn}`}</h5>
+          <div onClick={()=>{deleteBook(book.isbn)}}>delete</div>
         </div>
       );
     });
@@ -58,15 +54,18 @@ const App = () => {
 
   console.log("rendering");
   return (
-    <div>
+   <div>
       <h1>Book List</h1>
+      <div style={styles.appContainer}>
+        { showForm && 
+        <BookForm books={books} addBook={addBook} setShowForm={setShowForm}/>}
+        <button 
+          onClick={()=>setShowForm(!showForm)}>toggle new form</button>
+      </div>
       {renderBooks()}
     </div>
   );
-
 };
-
-
 const styles = {
   container: {
     boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
